@@ -1,10 +1,7 @@
-
-
-const symbols_and_operators = (
-	"&& || ^^ ++ -- += *= -= /= %= == <= >= != << >> ; ! = < > ( ) [ ] { } , . + - * / % ? : "
-  + "| & \\^ \\$ # @ ` ~ \\\\"
-).split(" ")
-
+const symbols_and_operators = `
+	&& || ^^ ++ -- += *= -= /= %= == <= >= != << >> ; ! = < > ( ) [ ] { } , . + - * / % ? :
+	| & \\^ \\$ # @ \\\\
+`.trim().split(/ |\n/g).map(i=>i.trim())
 
 const keywords = [
 	"attribute",
@@ -17,7 +14,8 @@ const keywords = [
     "uniform", "varying", "centroid",
     "struct",
     "invariant"
-];
+]
+
 const types = [
     "int",
     "void",
@@ -36,14 +34,45 @@ const types = [
 ]
 
 var allowed_tokens = [
+		//Comments
 		["COMMENT", /^(\/\/[^\n]*)/],
-		["MULTILINE_COMMENT", /^\/\\*.*?\\*\//s],
-		...symbols_and_operators.map(i => [i, new RegExp(`^(${i.replace(/\||\+|\*|\(|\)|\[|]|\.|\?|\^/g,"\\$&")})`)]),
-		...keywords.map(i=>[i.toUpperCase(), new RegExp(`^(${i})\\b`)]),
+		["MULTILINE_COMMENT", /^\/\\*.*\\*\//s],
+
+		//Symbols and operators
+		...`
+			&& || ^^ ++ -- += *= -= /= %= == <= >= != << >> ; ! = < > ( ) [ ] { } , . + - * / % ? :
+			| & \\^ \\$ # @ \\\\
+		`.trim().split(/ |\n/g).map(i=>i.trim()).map(i => [i, new RegExp(`^(${i.replace(/\||\+|\*|\(|\)|\[|]|\.|\?|\^/g,"\\$&")})`)]),
+
+		//Keywords
+		...[
+			"attribute",
+			"const",
+			"break", "continue",
+			"if", "else", 
+			"do", "for", "while",
+			"switch", "case",
+			"return",
+			"class",
+			"struct",
+			"public",
+			"private",
+		].map(i=>[i.toUpperCase(), new RegExp(`^${i}\\b`)]),
+
+		//Literals
 		["BOOL_CONST", /^(true|false)\b/],
-		["STRING_CONST", /^("(\\\\|\\"|[^"])*")/],
+		["STRING_CONST", /^"(\\\\|\\"|[^"])*"/],
+		["CHAR_CONST", /^'.'/],
+		
+		//Identifiers
 		["IDENTIFIER", /^([a-zA-Z_][a-zA-Z0-9_]*)\b/],
-		["NUMBER_CONST", /^(\d+\.\d*|\.\d+|\d+)/]
+
+		//Number literal
+		["NUMBER_CONST", /^(\d+\.\d*|\.\d+|[1-9]\d*|0)\b/],
+		["HEX_CONST", /^0x[0-9A-Fa-f]+\b/],
+		["OCTAL_CONST", /^0[0-7]+\b/],
+		["BINARY_CONST", /^0b[01]+\b/],
+		
 ]
 
 var tokenizer = new Tokenizer(
@@ -58,8 +87,13 @@ statements := ε
 
 variable_identifier := IDENTIFIER
 
+number := NUMBER_CONST
+number := HEX_CONST
+number := OCTAL_CONST
+number := BINARY_CONST
+
 primary_expression  := variable_identifier
-primary_expression  := NUMBER_CONST
+primary_expression  := number
 primary_expression  := BOOL_CONST
 primary_expression  := STRING_CONST
 primary_expression  := ( expression )
@@ -303,11 +337,6 @@ translation_unit := external_declaration
 translation_unit := translation_unit external_declaration
 `
 
-// grammar_s = `
-// __START__ := s
-// s := NUMBER_CONST
-// s := s + NUMBER_CONST
-// `;
 
 var grammar = new Grammar(...grammar_s
 	.trim()
