@@ -1,0 +1,373 @@
+
+ statement_list [
+   statement_list [
+     function_definition [
+       function_prototype [
+         function_header_with_parameters [
+           function_header [
+             IDENTIFIER "vec2"
+             IDENTIFIER "sqr"
+             "("
+           ]
+           parameter_declarator [
+             IDENTIFIER "vec2"
+             IDENTIFIER "a"
+           ]
+         ]
+         ")"
+       ]
+       compound_statement_no_new_scope [ ""
+         jump_statement [
+           RETURN "return"
+           function_call_generic [
+             function_call_header_with_parameters [
+               function_call_header_with_parameters [
+                 function_call_header [
+                   IDENTIFIER "vec2"
+                   "("
+                 ]
+                 additive_expression [
+                   multiplicative_expression [
+                     postfix_expression [
+                       IDENTIFIER "a"
+                       "."
+                       IDENTIFIER "x"
+                     ]
+                     "*"
+                     postfix_expression [
+                       IDENTIFIER "a"
+                       "."
+                       IDENTIFIER "x"
+                     ]
+                   ]
+                   "-"
+                   multiplicative_expression [
+                     postfix_expression [
+                       IDENTIFIER "a"
+                       "."
+                       IDENTIFIER "y"
+                     ]
+                     "*"
+                     postfix_expression [
+                       IDENTIFIER "a"
+                       "."
+                       IDENTIFIER "y"
+                     ]
+                   ]
+                 ]
+               ]
+               ","
+               multiplicative_expression [
+                 multiplicative_expression [
+                   NUMBER_CONST "2.0"
+                   "*"
+                   postfix_expression [
+                     IDENTIFIER "a"
+                     "."
+                     IDENTIFIER "x"
+                   ]
+                 ]
+                 "*"
+                 postfix_expression [
+                   IDENTIFIER "a"
+                   "."
+                   IDENTIFIER "y"
+                 ]
+               ]
+             ]
+             ")"
+           ]
+           ";"
+         ] ""
+       ]
+     ]
+     function_definition [
+       function_prototype [
+         function_header_with_parameters [
+           function_header [
+             IDENTIFIER "float"
+             IDENTIFIER "mag"
+             "("
+           ]
+           parameter_declarator [
+             IDENTIFIER "vec2"
+             IDENTIFIER "a"
+           ]
+         ]
+         ")"
+       ]
+       compound_statement_no_new_scope [ ""
+         jump_statement [
+           RETURN "return"
+           additive_expression [
+             multiplicative_expression [
+               postfix_expression [
+                 IDENTIFIER "a"
+                 "."
+                 IDENTIFIER "x"
+               ]
+               "*"
+               postfix_expression [
+                 IDENTIFIER "a"
+                 "."
+                 IDENTIFIER "x"
+               ]
+             ]
+             "+"
+             multiplicative_expression [
+               postfix_expression [
+                 IDENTIFIER "a"
+                 "."
+                 IDENTIFIER "y"
+               ]
+               "*"
+               postfix_expression [
+                 IDENTIFIER "a"
+                 "."
+                 IDENTIFIER "y"
+               ]
+             ]
+           ]
+           ";"
+         ] ""
+       ]
+     ]
+   ]
+   function_definition [
+     function_prototype [
+       function_header [
+         IDENTIFIER "void"
+         IDENTIFIER "main"
+         "("
+       ]
+       ")"
+     ]
+     compound_statement_no_new_scope [ ""
+       statement_list [
+         statement_list [
+           statement_list [
+             statement_list [
+               statement_list [
+                 declaration [
+                   single_declaration [
+                     IDENTIFIER "float"
+                     IDENTIFIER "c"
+                     "="
+                     NUMBER_CONST "1.0"
+                   ]
+                   ";"
+                 ]
+                 declaration [
+                   single_declaration [
+                     IDENTIFIER "vec2"
+                     IDENTIFIER "v"
+                     "="
+                     function_call_generic [
+                       function_call_header_with_parameters [
+                         function_call_header_with_parameters [
+                           function_call_header [
+                             IDENTIFIER "vec2"
+                             "("
+                           ]
+                           NUMBER_CONST "0"
+                         ]
+                         ","
+                         NUMBER_CONST "0"
+                       ]
+                       ")"
+                     ]
+                   ]
+                   ";"
+                 ]
+               ]
+               iteration_statement [
+                 FOR "for"
+                 "("
+                 declaration [
+                   single_declaration [
+                     IDENTIFIER "int"
+                     IDENTIFIER "i"
+                     "="
+                     NUMBER_CONST "0"
+                   ]
+                   ";"
+                 ]
+                 for_rest_statement [
+                   relational_expression [
+                     IDENTIFIER "i"
+                     "<"
+                     NUMBER_CONST "128"
+                   ]
+                   ";"
+                   postfix_expression [
+                     IDENTIFIER "i"
+                     "++"
+                   ]
+                 ]
+                 ")"
+                 compound_statement_no_new_scope [ ""
+                   statement_list [
+                     statement_list [
+                       selection_statement [
+                         IF "if"
+                         "("
+                         relational_expression [
+                           function_call_generic [
+                             function_call_header_with_parameters [
+                               function_call_header [
+                                 IDENTIFIER "mag"
+                                 "("
+                               ]
+                               IDENTIFIER "v"
+                             ]
+                             ")"
+                           ]
+                           ">"
+                           NUMBER_CONST "8.0"
+                         ]
+                         ")"
+                         jump_statement [
+                           BREAK "break"
+                           ";"
+                         ]
+                       ]
+                       expression_statement [
+                         assignment_expression [
+                           IDENTIFIER "v"
+                           "="
+                           additive_expression [
+                             function_call_generic [
+                               function_call_header_with_parameters [
+                                 function_call_header [
+                                   IDENTIFIER "sqr"
+                                   "("
+                                 ]
+                                 IDENTIFIER "v"
+                               ]
+                               ")"
+                             ]
+                             "+"
+                             multiplicative_expression [
+                               NUMBER_CONST "2.0"
+                               "*"
+                               IDENTIFIER "fragCoord"
+                             ]
+                           ]
+                         ]
+                         ";"
+                       ]
+                     ]
+                     expression_statement [
+                       assignment_expression [
+                         IDENTIFIER "c"
+                         "*="
+                         NUMBER_CONST "0.95"
+                       ]
+                       ";"
+                     ]
+                   ] ""
+                 ]
+               ]
+             ]
+             expression_statement [
+               assignment_expression [
+                 IDENTIFIER "c"
+                 "="
+                 additive_expression [
+                   NUMBER_CONST "1.0"
+                   "-"
+                   IDENTIFIER "c"
+                 ]
+               ]
+               ";"
+             ]
+           ]
+           declaration [
+             single_declaration [
+               IDENTIFIER "vec3"
+               IDENTIFIER "col"
+               "="
+               additive_expression [
+                 multiplicative_expression [
+                   function_call_generic [
+                     function_call_header_with_parameters [
+                       function_call_header_with_parameters [
+                         function_call_header_with_parameters [
+                           function_call_header [
+                             IDENTIFIER "vec3"
+                             "("
+                           ]
+                           NUMBER_CONST "0"
+                         ]
+                         ","
+                         NUMBER_CONST "0"
+                       ]
+                       ","
+                       NUMBER_CONST "0.5"
+                     ]
+                     ")"
+                   ]
+                   "*"
+                   primary_expression [
+                     "("
+                     additive_expression [
+                       NUMBER_CONST "1.0"
+                       "-"
+                       IDENTIFIER "c"
+                     ]
+                     ")"
+                   ]
+                 ]
+                 "+"
+                 multiplicative_expression [
+                   function_call_generic [
+                     function_call_header_with_parameters [
+                       function_call_header_with_parameters [
+                         function_call_header_with_parameters [
+                           function_call_header [
+                             IDENTIFIER "vec3"
+                             "("
+                           ]
+                           NUMBER_CONST "1.0"
+                         ]
+                         ","
+                         NUMBER_CONST "1.0"
+                       ]
+                       ","
+                       NUMBER_CONST "1.0"
+                     ]
+                     ")"
+                   ]
+                   "*"
+                   IDENTIFIER "c"
+                 ]
+               ]
+             ]
+             ";"
+           ]
+         ]
+         expression_statement [
+           assignment_expression [
+             IDENTIFIER "gl_FragColor"
+             "="
+             function_call_generic [
+               function_call_header_with_parameters [
+                 function_call_header_with_parameters [
+                   function_call_header [
+                     IDENTIFIER "vec4"
+                     "("
+                   ]
+                   IDENTIFIER "col"
+                 ]
+                 ","
+                 NUMBER_CONST "1.0"
+               ]
+               ")"
+             ]
+           ]
+           ";"
+         ]
+       ] ""
+     ]
+   ]
+ ]
