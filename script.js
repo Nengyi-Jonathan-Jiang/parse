@@ -707,10 +707,18 @@ void main()
 			if(selectionStart == selectionEnd){
 				let before = value.substring(prevNewLinePos, selectionEnd);
 				let after = value.substring(selectionEnd, nextNewLinePos);
-				let padding_length = 4 - ((before.length + 3) % 4);
-				changes = before + " ".repeat(padding_length) + after;
-				selectionEnd += padding_length;
-				selectionStart += padding_length;
+                if(e.shiftKey == false){
+    				let padding_length = 4 - ((before.length + 3) % 4);
+    				changes = before + " ".repeat(padding_length) + after;
+    				selectionEnd += padding_length;
+    				selectionStart += padding_length;
+                }
+                else{
+                    let unpad_length = (before.match(/^\n {0,4}/)[0] || "\n").length - 1;
+                    changes = before.replace(/^\n {0,4}/, "\n") + after;
+                    selectionEnd -= unpad_length;
+                    selectionStart -= unpad_length;
+                }
 			}
 			else{
 				let lines = value.substring(prevNewLinePos, nextNewLinePos).split("\n").slice(1);
@@ -720,10 +728,9 @@ void main()
 					selectionEnd += lines.length * 4;
 				}
 				else{
-					selectionEnd
-					selectionStart -= lines[0].match(/^ {0,4}/)[0].length;
+					selectionEnd -= lines.map(i=>(i.match(/^ {0,4}/)[0] || []).length).reduce((a,b)=>a+b);
+					selectionStart -= (lines[0].match(/^ {0,4}/)[0] || []).length;
 					changes = "\n" + lines.map(i=>i.replace(/^ {0,4}/,"")).join("\n");
-					selectionEnd -= lines.length * 4;
 				}
 			}
 			input.value = value.substring(0, prevNewLinePos) + changes + value.substring(nextNewLinePos);
