@@ -18,7 +18,7 @@ var allowed_tokens = [
 			"break", "continue",
 			"do", "while", "for", 
 			"if", "else", 
-			"test", "case", "default", 
+			"switch", "test", "case", "default", 
 			
 			"return",
 
@@ -32,9 +32,8 @@ var allowed_tokens = [
 
 		//Literals
 		["BOOL_CONST", /^(true|false)\b/],
-		["STRING_CONST", /^"(\\\\|\\"|[^"])*"/],
+		["STRING_CONST", /^"([^\\"]|\\.|\\")*"/],
 		["CHAR_CONST", /^'.'/],
-		
 		//Identifiers
 		["IDENTIFIER", /^([a-zA-Z_][a-zA-Z0-9_]*)\b/],
 
@@ -323,12 +322,20 @@ statement := variable_decls
 statement := function_decl
 statement := output_statement
 statement := input_statement
+statement := while_loop
+statement := do_while_loop
+statement := for_loop
+statement := if_statement
+statement := else_statement
+statement := test_statement
+statement := switch_statement
+statement := jump_statement
 
 primary_expression := ( expression )
 
 primary_expression := HEX_CONST
-primary_expression := BOOL_CONST
 primary_expression := OCTAL_CONST
+primary_expression := BINARY_CONST
 primary_expression := NUMBER_CONST
 
 primary_expression := CHAR_CONST
@@ -442,10 +449,36 @@ function_decl := type FUNC IDENTIFIER ( func_args ) block_statements
 func_args := single_variable_decl
 func_args := func_args , single_variable_decl
 
+do_while_loop := DO block_statements WHILE ( expression ) ;
+while_loop := WHILE ( expression ) statement
+for_loop := for ( variable_decls ; expression ; expression ) statement
+
+if_statement := IF ( expression ) statement
+else_statement := ELSE statement
+
+test_case_statement := CASE ( expression ) statement
+test_case_statement := DEFAULT statement
+test_case_statements := ε
+test_case_statements := test_case_statements test_case_statement
+
+test_statement := TEST ( expression ) { test_case_statements }
+
+switch_case_statement := CASE expression : statements
+switch_case_statements := ε
+switch_case_statements := switch_case_statements switch_case_statement
+
+switch_statement := SWITCH ( expression ) { switch_case_statements }
+
 block_statements := { statements }
 
 output_statement := OUTPUT expression ;
 input_statement := INPUT expression ;
+
+jump_statement := CONTINUE ;
+jump_statement := BREAK ;
+jump_statement := RETURN ;
+jump_statement := RETURN expression ;
+jump_statement := GOTO IDENTIFIER ;
 `;
 
 
@@ -468,6 +501,7 @@ var parser = new Parser(grammar);
 	/**@type {HTMLInputElement}*/
 	let input = document.getElementById("input")
 	input.value=`
+/* A simple program demonstrating simple control structures and I/O */
 void func main(){
 	int var a;
 	input a;
@@ -492,7 +526,7 @@ void func main(){
 	}
 	output "breh.";
 }
-	`.trim();
+	`.trim().replaceAll("\t","    ");
 	input.oninput = input.onchange = _=>{
 		input.style.setProperty("outline", `1px solid ${parser.parse(tokenizer.tokenize(input.value))[1] ? "limegreen" : "red"}`);
 	}

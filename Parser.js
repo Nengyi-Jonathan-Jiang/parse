@@ -182,7 +182,7 @@ class ParseChart{
 
 
 class ASTNode{
-    /** @param {string} name @param {string|ASTNode[]} value */
+    /** @param {string} name @param {Token|ASTNode[]} value */
     constructor(name, value){
         this.name = name;
         this.value = value;
@@ -190,9 +190,11 @@ class ASTNode{
 
 	toString(){
 		return JSON.stringify(this, null, 1)
+			.replaceAll(/\{\n\s+"type": "[^\n]*",\n\s*"value": "([^\n]*)",\n\s*"stringBeginPos": \d+,\n\s*"stringEndPos": \d+\n\s*\}/g, "\"$1\"")
 			.replaceAll(/"name": "(.*)",\n\s*"value":/g,"$1")
 			.replaceAll(/\s*(\{|\},?)/g,"")
-			.replaceAll(/(.+) "\1"/g,"\"$1\"");
+			.replaceAll(/(.+) "\1"/g,"\"$1\"")
+			.replaceAll(/ ""/g, "");
 	}
 }
 
@@ -284,7 +286,7 @@ class Parser{
             switch(state.ruleUsed){
 				case "shift":
 					let token = tkns.shift();
-					astStk.push(new ASTNode(token.type, token.value));
+					astStk.push(new ASTNode(token.type, token));
 					break;
 				case "reduce":
 					if(prev.rule.tkns.length == 1) break;

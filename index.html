@@ -6,9 +6,45 @@
     <title>parse</title>
 	  <script src="Parser.js"></script>
     <script src="Eval.js"></script>
+    <script src="Highlight.js"></script>
+
+    <style>
+      div#highlighted{
+        background-color: rgb(74, 73, 70);
+        color: rgb(144, 143, 140);
+        white-space: pre;
+        padding: 1em;
+        font-family: monospace;
+      }
+      span.number-literal{
+        color: #aa44ff;
+      }
+      span.control-keyword{
+        color: #ff5566;
+      }
+      span.string-literal{
+        color: #ffff88;
+      }
+      span.type-name{
+        color: #77ddff;
+      }
+      span.keyword{
+        color: #dd77dd;
+      }
+      span.unknown{
+        color: white;
+      }
+    </style>
   </head>
   <body>
 	  <textarea id="input" type="text" spellcheck="false" style="border:none;outline:1px solid black;resize:none;font-size:xx-large;font-family: monospace;width:calc(100vw - 24px);height:calc(100vh - 24px);white-space:nowrap;"></textarea>
+    <div id="highlighted"></div>
     <script src="script.js"></script>
+    <script>
+let input = document.querySelector("textarea").value;
+let ast = parser.toAST(tokenizer.tokenize(input));
+let output = document.getElementById("highlighted");
+highlight(ast, input, output)
+    </script>
   </body>
 </html>
