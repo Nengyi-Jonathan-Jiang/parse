@@ -1,5 +1,5 @@
 const symbols_and_operators = `
-	&& || ^^ ++ -- += *= -= /= %= == <= >= != << >> ; ! = < > ( ) [ ] { } , . + - * / % ? :
+	&& || ^^ ++ -- += *= -= /= %= == <= >= != << >> -> ; ! = < > ( ) [ ] { } , . + - * / % ? :
 	| & \\^ \\$ # @ \\\\
 `.trim().split(/ |\n/g).map(i=>i.trim())
 
@@ -68,268 +68,283 @@ var tokenizer = new Tokenizer(
 	["COMMENT","MULTILINE_COMMENT"]
 );
 
+// var grammar_s = `
+// __START__ := statements
+// statements := statement_list
+// statements := ε
+
+// variable_identifier := IDENTIFIER
+
+// number_literal := NUMBER_CONST
+// number_literal := HEX_CONST
+// number_literal := OCTAL_CONST
+// number_literal := BINARY_CONST
+
+// primary_expression  := variable_identifier
+// primary_expression  := number_literal
+// primary_expression  := BOOL_CONST
+// primary_expression  := STRING_CONST
+// primary_expression  := ( expression )
+
+// postfix_expression := primary_expression
+// postfix_expression := postfix_expression [ expression ]
+// postfix_expression := function_call
+// postfix_expression := postfix_expression . IDENTIFIER
+// postfix_expression := postfix_expression -> IDENTIFIER
+// postfix_expression := postfix_expression ++
+// postfix_expression := postfix_expression --
+
+// unary_expression := postfix_expression
+// unary_expression := unary_operator unary_expression
+
+// unary_operator := -
+// unary_operator := !
+// unary_operator := ~
+// unary_operator := *
+// unary_operator := &
+// unary_operator := ++
+// unary_operator := --
+
+// multiplicative_expression := unary_expression
+// multiplicative_expression := multiplicative_expression * unary_expression
+// multiplicative_expression := multiplicative_expression / unary_expression
+// multiplicative_expression := multiplicative_expression % unary_expression
+
+// additive_expression := multiplicative_expression
+// additive_expression := additive_expression + multiplicative_expression
+// additive_expression := additive_expression - multiplicative_expression
+
+// shift_expression := additive_expression
+// shift_expression := shift_expression << additive_expression
+// shift_expression := shift_expression >> additive_expression
+
+// relational_expression := shift_expression
+// relational_expression := relational_expression < shift_expression
+// relational_expression := relational_expression > shift_expression
+// relational_expression := relational_expression <= shift_expression
+// relational_expression := relational_expression >= shift_expression
+
+// equality_expression := relational_expression
+// equality_expression := equality_expression == relational_expression
+// equality_expression := equality_expression != relational_expression
+
+// binary_and_expression := equality_expression
+// binary_and_expression := binary_and_expression & equality_expression
+
+// binary_xor_expression := binary_and_expression
+// binary_xor_expression := binary_xor_expression ^ binary_and_expression
+// binary_or_expression := binary_xor_expression
+// binary_or_expression := binary_or_expression | binary_xor_expression
+
+// logical_and_expression := binary_or_expression
+// logical_and_expression := logical_and_expression && binary_or_expression
+
+// logical_xor_expression := logical_and_expression
+// logical_xor_expression := logical_xor_expression ^^ logical_and_expression
+
+// logical_or_expression := logical_xor_expression
+// logical_or_expression := logical_or_expression || logical_xor_expression
+
+// conditional_expression := logical_or_expression
+// conditional_expression := logical_or_expression ? expression : assignment_expression
+
+// assignment_expression := conditional_expression
+// assignment_expression := unary_expression assignment_operator assignment_expression
+
+// assignment_operator := =
+// assignment_operator := *=
+// assignment_operator := /=
+// assignment_operator := %=
+// assignment_operator := +=
+// assignment_operator := -=
+// assignment_operator := <<=
+// assignment_operator := >>=
+// assignment_operator := &=
+// assignment_operator := ^=
+// assignment_operator := |=
+
+// expression := assignment_expression
+// expression := expression , assignment_expression
+
+// lambda_expression := func ( func_params ) func_body
+
+// declaration := function_prototype ;
+// declaration := init_declarator_list ;
+// declaration := function_definition
+
+// function_call := function_call_or_method
+
+// function_call_or_method := function_call_generic
+// function_call_or_method := postfix_expression . function_call_generic
+
+// function_call_generic := function_call_header_with_parameters )
+// function_call_generic := function_call_header_no_parameters )
+
+// function_call_header_no_parameters := function_call_header VOID
+// function_call_header_no_parameters := function_call_header
+
+// function_call_header_with_parameters := function_call_header assignment_expression
+// function_call_header_with_parameters := function_call_header_with_parameters , assignment_expression
+
+// function_call_header := function_identifier (
+
+// function_identifier := type_specifier
+// function_identifier := IDENTIFIER
+// function_identifier := FIELD_SELECTION
+
+// function_prototype := function_declarator )
+
+// function_declarator := function_header
+// function_declarator := function_header_with_parameters
+
+// function_header_with_parameters := function_header parameter_declaration
+// function_header_with_parameters := function_header_with_parameters , parameter_declaration
+
+// function_header := fully_specified_type IDENTIFIER (
+
+// function_definition := function_prototype compound_statement_no_new_scope
+
+// parameter_declarator := type_specifier IDENTIFIER
+// parameter_declarator := type_specifier IDENTIFIER [ constant_expression ]
+
+// parameter_declaration := type_qualifier parameter_qualifier parameter_declarator
+// parameter_declaration := parameter_qualifier parameter_declarator
+// parameter_declaration := parameter_declarator
+// parameter_declaration := type_qualifier parameter_qualifier parameter_type_specifier
+// parameter_declaration := parameter_qualifier parameter_type_specifier
+// parameter_declaration := parameter_type_specifier
+
+// parameter_qualifier := IN
+// parameter_qualifier := OUT
+// parameter_qualifier := INOUT
+
+// parameter_type_specifier := type_specifier
+
+// init_declarator_list := single_declaration
+// init_declarator_list := init_declarator_list , IDENTIFIER
+// init_declarator_list := init_declarator_list , IDENTIFIER [ ]
+// init_declarator_list := init_declarator_list , IDENTIFIER [ constant_expression ]
+// init_declarator_list := init_declarator_list , IDENTIFIER [ ] = initializer
+// init_declarator_list := init_declarator_list , IDENTIFIER [ constant_expression ] = initializer
+// init_declarator_list := init_declarator_list , IDENTIFIER = initializer
+
+// single_declaration := fully_specified_type
+// single_declaration := fully_specified_type IDENTIFIER
+// single_declaration := fully_specified_type IDENTIFIER [ ]
+// single_declaration := fully_specified_type IDENTIFIER [ constant_expression ]
+// single_declaration := fully_specified_type IDENTIFIER [ ] = initializer
+// single_declaration := fully_specified_type IDENTIFIER [ constant_expression ] = initializer
+// single_declaration := fully_specified_type IDENTIFIER = initializer
+
+// fully_specified_type := type_specifier
+// fully_specified_type := type_qualifier type_specifier
+
+// type_qualifier := CONST
+// type_qualifier := VARYING
+// type_qualifier := CENTROID VARYING
+// type_qualifier := INVARIANT VARYING
+// type_qualifier := INVARIANT CENTROID VARYING
+// type_qualifier := UNIFORM
+// type_specifier := type_specifier_nonarray
+// type_specifier := type_specifier_nonarray [ ]
+// type_specifier := type_specifier_nonarray < type_args >
+// type_specifier := type_specifier_nonarray [ constant_expression ]
+
+// type_args := type_specifier
+// type_args := type_args , type_specifier
+
+// type_specifier_nonarray := struct_specifier
+// type_specifier_nonarray := IDENTIFIER
+
+// struct_specifier := STRUCT IDENTIFIER { struct_declaration_list }
+// struct_specifier := STRUCT { struct_declaration_list }
+
+// struct_declaration_list := struct_declaration
+// struct_declaration_list := struct_declaration_list struct_declaration
+// struct_declaration := type_specifier struct_declarator_list ;
+// struct_declarator_list := struct_declarator
+// struct_declarator_list := struct_declarator_list , struct_declarator
+// struct_declarator := IDENTIFIER
+// struct_declarator := IDENTIFIER [ constant_expression ]
+
+// initializer := assignment_expression
+
+// declaration_statement := declaration
+
+// statement := compound_statement
+// statement := simple_statement
+
+// simple_statement := declaration_statement
+// simple_statement := expression_statement
+// simple_statement := selection_statement
+// simple_statement := iteration_statement
+// simple_statement := jump_statement
+
+// compound_statement := { }
+// compound_statement := { statement_list }
+
+// statement_no_new_scope := compound_statement_no_new_scope
+// statement_no_new_scope := simple_statement
+
+// compound_statement_no_new_scope := { }
+// compound_statement_no_new_scope := { statement_list }
+
+// statement_list := statement
+// statement_list := statement_list statement
+
+// expression_statement := ;
+// expression_statement := expression ;
+
+// selection_statement := IF ( expression ) selection_rest_statement
+
+// selection_rest_statement := statement ELSE statement
+// selection_rest_statement := statement
+
+// condition := expression
+// condition := fully_specified_type IDENTIFIER = initializer
+
+// iteration_statement := WHILE ( condition ) statement_no_new_scope
+// iteration_statement := DO statement WHILE ( expression ) ;
+// iteration_statement := FOR ( for_init_statement for_rest_statement ) statement_no_new_scope
+
+// for_init_statement := expression_statement
+// for_init_statement := declaration_statement
+
+// conditionopt := condition
+
+// for_rest_statement := conditionopt ;
+// for_rest_statement := conditionopt ; expression
+
+// output_statement := OUTPUT expression ;
+// input_statement := INPUT variable ;
+
+// jump_statement := CONTINUE ;
+// jump_statement := BREAK ;
+// jump_statement := RETURN ;
+// jump_statement := RETURN expression ;
+// jump_statement := GOTO IDENTIFIER ;
+// `
+
 var grammar_s = `
 __START__ := statements
-statements := statement_list
+statements := statements statement
 statements := ε
 
-variable_identifier := IDENTIFIER
+statement := expression ;
+expression := IDENTIFIER
 
-number := NUMBER_CONST
-number := HEX_CONST
-number := OCTAL_CONST
-number := BINARY_CONST
+type := IDENTIFIER
 
-primary_expression  := variable_identifier
-primary_expression  := number
-primary_expression  := BOOL_CONST
-primary_expression  := STRING_CONST
-primary_expression  := ( expression )
+function_decl := type FUNC IDENTIFIER ( func_args ) block_statements
 
-postfix_expression := primary_expression
-postfix_expression := postfix_expression [ integer_expression ]
-postfix_expression := function_call
-postfix_expression := postfix_expression . IDENTIFIER
-postfix_expression := postfix_expression ++
-postfix_expression := postfix_expression --
-
-integer_expression := expression
-
-unary_expression := postfix_expression
-unary_expression := unary_operator unary_expression
-
-unary_operator := -
-unary_operator := !
-unary_operator := ~
-unary_operator := *
-unary_operator := ++
-unary_operator := --
-
-multiplicative_expression := unary_expression
-multiplicative_expression := multiplicative_expression * unary_expression
-multiplicative_expression := multiplicative_expression / unary_expression
-multiplicative_expression := multiplicative_expression % unary_expression
-
-additive_expression := multiplicative_expression
-additive_expression := additive_expression + multiplicative_expression
-additive_expression := additive_expression - multiplicative_expression
-
-shift_expression := additive_expression
-shift_expression := shift_expression << additive_expression
-shift_expression := shift_expression >> additive_expression
-
-relational_expression := shift_expression
-relational_expression := relational_expression < shift_expression
-relational_expression := relational_expression > shift_expression
-relational_expression := relational_expression <= shift_expression
-relational_expression := relational_expression >= shift_expression
-
-equality_expression := relational_expression
-equality_expression := equality_expression == relational_expression
-equality_expression := equality_expression != relational_expression
-
-and_expression := equality_expression
-and_expression := and_expression & equality_expression
-
-exclusive_or_expression := and_expression
-exclusive_or_expression := exclusive_or_expression ^ and_expression
-inclusive_or_expression := exclusive_or_expression
-inclusive_or_expression := inclusive_or_expression | exclusive_or_expression
-
-logical_and_expression := inclusive_or_expression
-logical_and_expression := logical_and_expression && inclusive_or_expression
-
-logical_xor_expression := logical_and_expression
-logical_xor_expression := logical_xor_expression ^^ logical_and_expression
-
-logical_or_expression := logical_xor_expression
-logical_or_expression := logical_or_expression || logical_xor_expression
-
-conditional_expression := logical_or_expression
-conditional_expression := logical_or_expression ? expression : assignment_expression
-
-assignment_expression := conditional_expression
-assignment_expression := unary_expression assignment_operator assignment_expression
-
-assignment_operator := =
-assignment_operator := *=
-assignment_operator := /=
-assignment_operator := %=
-assignment_operator := +=
-assignment_operator := -=
-assignment_operator := <<=
-assignment_operator := >>=
-assignment_operator := &=
-assignment_operator := ^=
-assignment_operator := |=
-
-expression := assignment_expression
-expression := expression , assignment_expression
-
-constant_expression := conditional_expression
-
-declaration := function_prototype ;
-declaration := init_declarator_list ;
-declaration := function_definition
-
-function_call := function_call_or_method
-
-function_call_or_method := function_call_generic
-function_call_or_method := postfix_expression . function_call_generic
-
-function_call_generic := function_call_header_with_parameters )
-function_call_generic := function_call_header_no_parameters )
-
-function_call_header_no_parameters := function_call_header VOID
-function_call_header_no_parameters := function_call_header
-
-function_call_header_with_parameters := function_call_header assignment_expression
-function_call_header_with_parameters := function_call_header_with_parameters , assignment_expression
-
-function_call_header := function_identifier (
-
-function_identifier := type_specifier
-function_identifier := IDENTIFIER
-function_identifier := FIELD_SELECTION
-
-function_prototype := function_declarator )
-
-function_declarator := function_header
-function_declarator := function_header_with_parameters
-
-function_header_with_parameters := function_header parameter_declaration
-function_header_with_parameters := function_header_with_parameters , parameter_declaration
-
-function_header := fully_specified_type IDENTIFIER (
-
-function_definition := function_prototype compound_statement_no_new_scope
-
-parameter_declarator := type_specifier IDENTIFIER
-parameter_declarator := type_specifier IDENTIFIER [ constant_expression ]
-
-parameter_declaration := type_qualifier parameter_qualifier parameter_declarator
-parameter_declaration := parameter_qualifier parameter_declarator
-parameter_declaration := parameter_declarator
-parameter_declaration := type_qualifier parameter_qualifier parameter_type_specifier
-parameter_declaration := parameter_qualifier parameter_type_specifier
-parameter_declaration := parameter_type_specifier
-
-parameter_qualifier := IN
-parameter_qualifier := OUT
-parameter_qualifier := INOUT
-
-parameter_type_specifier := type_specifier
-
-init_declarator_list := single_declaration
-init_declarator_list := init_declarator_list , IDENTIFIER
-init_declarator_list := init_declarator_list , IDENTIFIER [ ]
-init_declarator_list := init_declarator_list , IDENTIFIER [ constant_expression ]
-init_declarator_list := init_declarator_list , IDENTIFIER [ ] = initializer
-init_declarator_list := init_declarator_list , IDENTIFIER [ constant_expression ] = initializer
-init_declarator_list := init_declarator_list , IDENTIFIER = initializer
-
-single_declaration := fully_specified_type
-single_declaration := fully_specified_type IDENTIFIER
-single_declaration := fully_specified_type IDENTIFIER [ ]
-single_declaration := fully_specified_type IDENTIFIER [ constant_expression ]
-single_declaration := fully_specified_type IDENTIFIER [ ] = initializer
-single_declaration := fully_specified_type IDENTIFIER [ constant_expression ] = initializer
-single_declaration := fully_specified_type IDENTIFIER = initializer
-
-fully_specified_type := type_specifier
-fully_specified_type := type_qualifier type_specifier
-
-type_qualifier := CONST
-type_qualifier := VARYING
-type_qualifier := CENTROID VARYING
-type_qualifier := INVARIANT VARYING
-type_qualifier := INVARIANT CENTROID VARYING
-type_qualifier := UNIFORM
-type_specifier := type_specifier_nonarray
-type_specifier := type_specifier_nonarray [ ]
-type_specifier := type_specifier_nonarray < type_args >
-type_specifier := type_specifier_nonarray [ constant_expression ]
-
-type_args := type_specifier
-type_args := type_args , type_specifier
-
-type_specifier_nonarray := struct_specifier
-type_specifier_nonarray := IDENTIFIER
-
-struct_specifier := STRUCT IDENTIFIER { struct_declaration_list }
-struct_specifier := STRUCT { struct_declaration_list }
-
-struct_declaration_list := struct_declaration
-struct_declaration_list := struct_declaration_list struct_declaration
-struct_declaration := type_specifier struct_declarator_list ;
-struct_declarator_list := struct_declarator
-struct_declarator_list := struct_declarator_list , struct_declarator
-struct_declarator := IDENTIFIER
-struct_declarator := IDENTIFIER [ constant_expression ]
-
-initializer := assignment_expression
-
-declaration_statement := declaration
-
-statement := compound_statement
-statement := simple_statement
-
-simple_statement := declaration_statement
-simple_statement := expression_statement
-simple_statement := selection_statement
-simple_statement := iteration_statement
-simple_statement := jump_statement
-
-compound_statement := { }
-compound_statement := { statement_list }
-
-statement_no_new_scope := compound_statement_no_new_scope
-statement_no_new_scope := simple_statement
-
-compound_statement_no_new_scope := { }
-compound_statement_no_new_scope := { statement_list }
-
-statement_list := statement
-statement_list := statement_list statement
-
-expression_statement := ;
-expression_statement := expression ;
-
-selection_statement := IF ( expression ) selection_rest_statement
-
-selection_rest_statement := statement ELSE statement
-selection_rest_statement := statement
-
-condition := expression
-condition := fully_specified_type IDENTIFIER = initializer
-
-iteration_statement := WHILE ( condition ) statement_no_new_scope
-iteration_statement := DO statement WHILE ( expression ) ;
-iteration_statement := FOR ( for_init_statement for_rest_statement ) statement_no_new_scope
-
-for_init_statement := expression_statement
-for_init_statement := declaration_statement
-
-conditionopt := condition
-
-for_rest_statement := conditionopt ;
-for_rest_statement := conditionopt ; expression
-
-jump_statement := CONTINUE ;
-jump_statement := BREAK ;
-jump_statement := RETURN ;
-jump_statement := RETURN expression ;
-jump_statement := DISCARD ;
-
-translation_unit := external_declaration
-translation_unit := translation_unit external_declaration
-`
+block_statements := { statements }
+`;
 
 
 var grammar = new Grammar(...grammar_s
 	.trim()
 	.split(/\n+/g)
-	.filter(i=>i.length)
+	.filter(i=>i.length && !i.match(/^\/\//))
 	.map(i=>i.split(':='))
 	.map(
 		i=>new ParseRule(
@@ -360,7 +375,7 @@ func void main(){
 				output "You said three";
 			}
 			case (a % 2 == 0) {
-				output "You gave me an even number";
+				output "You gave me an even number_literal";
 			}
 			default {
 				output "IDK what you gave me";
