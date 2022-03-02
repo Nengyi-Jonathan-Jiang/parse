@@ -1,7 +1,7 @@
 /* Example code
 
 func void main(){
-    int a;
+    var int a;
     input a;
     while(a != 0){
         test(a){

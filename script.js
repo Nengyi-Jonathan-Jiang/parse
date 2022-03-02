@@ -1,26 +1,3 @@
-const symbols_and_operators = `
-	&& || ^^ ++ -- += *= -= /= %= == <= >= != << >> -> ; ! = < > ( ) [ ] { } , . + - * / % ? :
-	| & \\^ \\$ # @ \\\\
-`.trim().split(/ |\n/g).map(i=>i.trim())
-
-const keywords = [
-    "const",
-
-	"class", "func", 
-
-    "break", "continue",
-    "do", "while", "for", 
-	"if", "else", 
-	"test", "case", "default", 
-	
-    "return",
-
-	"public", "private", "protected", 
-
-	"input",
-	"output",
-]
-
 var allowed_tokens = [
 		//Comments
 		["COMMENT", /^(\/\/[^\n]*)/],
@@ -28,23 +5,29 @@ var allowed_tokens = [
 
 		//Symbols and operators
 		...`
-			&& || ^^ ++ -- += *= -= /= %= == <= >= != << >> ; ! = < > ( ) [ ] { } , . + - * / % ? :
-			| & \\^ \\$ # @ \\\\
+			>>= <<= && || ^^ ++ -- += *= -= /= %= == <= >= != << >> -> :: ; ! = < > ( ) [ ] { } , . + - * / % ? :
+			| & ^ \\$ # @ \\\\
 		`.trim().split(/ |\n/g).map(i=>i.trim()).map(i => [i, new RegExp(`^(${i.replace(/\||\+|\*|\(|\)|\[|]|\.|\?|\^/g,"\\$&")})`)]),
 
 		//Keywords
 		...[
-			"attribute",
 			"const",
+
+			"class", "func", "var", 
+
 			"break", "continue",
+			"do", "while", "for", 
 			"if", "else", 
-			"do", "for", "while",
-			"switch", "case",
+			"test", "case", "default", 
+			
 			"return",
-			"class",
-			"struct",
-			"public",
-			"private",
+
+			"public", "private", "protected", 
+
+			"static",
+
+			"input",
+			"output",
 		].map(i=>[i.toUpperCase(), new RegExp(`^${i}\\b`)]),
 
 		//Literals
@@ -327,17 +310,142 @@ var tokenizer = new Tokenizer(
 
 var grammar_s = `
 __START__ := statements
-statements := statements statement
+
 statements := ε
+statements := statement_list
+
+statement_list := statement
+statement_list := statement_list statement
 
 statement := expression ;
-expression := IDENTIFIER
+statement := block_statements
+statement := variable_decls
+statement := function_decl
+statement := output_statement
+statement := input_statement
+
+primary_expression := ( expression )
+
+primary_expression := HEX_CONST
+primary_expression := BOOL_CONST
+primary_expression := OCTAL_CONST
+primary_expression := NUMBER_CONST
+
+primary_expression := CHAR_CONST
+primary_expression := STRING_CONST
+
+primary_expression := IDENTIFIER
+
+postfix_expression := primary_expression
+postfix_expression := postfix_expression [ expression ]
+postfix_expression := function_call
+postfix_expression := postfix_expression . IDENTIFIER
+postfix_expression := postfix_expression -> IDENTIFIER
+postfix_expression := postfix_expression ++
+postfix_expression := postfix_expression --
+
+unary_expression := postfix_expression
+unary_expression := unary_operator unary_expression
+
+unary_operator := -
+unary_operator := !
+unary_operator := ~
+unary_operator := *
+unary_operator := &
+unary_operator := ++
+unary_operator := --
+
+multiplicative_expression := unary_expression
+multiplicative_expression := multiplicative_expression * unary_expression
+multiplicative_expression := multiplicative_expression / unary_expression
+multiplicative_expression := multiplicative_expression % unary_expression
+
+additive_expression := multiplicative_expression
+additive_expression := additive_expression + multiplicative_expression
+additive_expression := additive_expression - multiplicative_expression
+
+shift_expression := additive_expression
+shift_expression := shift_expression << additive_expression
+shift_expression := shift_expression >> additive_expression
+
+relational_expression := shift_expression
+relational_expression := relational_expression < shift_expression
+relational_expression := relational_expression > shift_expression
+relational_expression := relational_expression <= shift_expression
+relational_expression := relational_expression >= shift_expression
+
+equality_expression := relational_expression
+equality_expression := equality_expression == relational_expression
+equality_expression := equality_expression != relational_expression
+
+binary_and_expression := equality_expression
+binary_and_expression := binary_and_expression & equality_expression
+
+binary_xor_expression := binary_and_expression
+binary_xor_expression := binary_xor_expression ^ binary_and_expression
+binary_or_expression := binary_xor_expression
+binary_or_expression := binary_or_expression | binary_xor_expression
+
+logical_and_expression := binary_or_expression
+logical_and_expression := logical_and_expression && binary_or_expression
+
+logical_xor_expression := logical_and_expression
+logical_xor_expression := logical_xor_expression ^^ logical_and_expression
+
+logical_or_expression := logical_xor_expression
+logical_or_expression := logical_or_expression || logical_xor_expression
+
+conditional_expression := logical_or_expression
+conditional_expression := logical_or_expression ? expression : assignment_expression
+
+assignment_expression := conditional_expression
+assignment_expression := unary_expression assignment_operator assignment_expression
+
+assignment_operator := =
+assignment_operator := *=
+assignment_operator := /=
+assignment_operator := %=
+assignment_operator := +=
+assignment_operator := -=
+assignment_operator := <<=
+assignment_operator := >>=
+assignment_operator := &=
+assignment_operator := ^=
+assignment_operator := |=
+
+expression := assignment_expression
+expression := expression , assignment_expression
 
 type := IDENTIFIER
+type := IDENTIFIER :: type
+type := type *
+type := type &
+type := type < template_params >
 
+template_param := expression
+template_param := type
+
+template_params := template_param
+template_params := template_params , template_param
+
+variable_decls := type VAR variable_inits ;
+
+variable_inits := variable_name_and_assign
+variable_inits := variable_inits , variable_name_and_assign
+
+variable_name_and_assign := IDENTIFIER
+variable_name_and_assign := IDENTIFIER = expression
+
+function_decl := type FUNC IDENTIFIER ( ) block_statements
 function_decl := type FUNC IDENTIFIER ( func_args ) block_statements
 
+func_args := single_variable_decl
+func_args := func_args , single_variable_decl
+
 block_statements := { statements }
+
+output_statement := OUTPUT expression ;
+input_statement := INPUT expression ;
 `;
 
 
@@ -360,8 +468,8 @@ var parser = new Parser(grammar);
 	/**@type {HTMLInputElement}*/
 	let input = document.getElementById("input")
 	input.value=`
-func void main(){
-	int a;
+void func main(){
+	int var a;
 	input a;
 	while(a != 0){
 		test(a){
