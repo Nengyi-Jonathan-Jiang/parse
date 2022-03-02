@@ -4,33 +4,21 @@ const symbols_and_operators = `
 `.trim().split(/ |\n/g).map(i=>i.trim())
 
 const keywords = [
-	"attribute",
     "const",
-    "break", "continue",
-    "do", "else", "for", "if", "while",
-    "discard",
-    "return",
-    "in", "out", "inout",
-    "uniform", "varying", "centroid",
-    "struct",
-    "invariant"
-]
 
-const types = [
-    "int",
-    "void",
-    "bool",
-    "float",
-    "bvec2", "bvec3", "bvec4",
-    "ivec2", "ivec3", "ivec4",
-    "vec2",  "vec3",  "vec4",
-    "mat2",  "mat3",  "mat4",
-    "mat2x2", "mat2x3", "mat2x4",
-	"mat3x2", "mat3x3", "mat3x4",
-    "mat4x2", "mat4x3", "mat4x4",
-    "sampler1d", "sampler2d", "sampler3d",
-    "samplercube",
-    "sampler1dshadow", "sampler2dshadow",
+	"class", "func", 
+
+    "break", "continue",
+    "do", "while", "for", 
+	"if", "else", 
+	"test", "case", "default", 
+	
+    "return",
+
+	"public", "private", "protected", 
+
+	"input",
+	"output",
 ]
 
 var allowed_tokens = [
@@ -353,39 +341,33 @@ var grammar = new Grammar(...grammar_s
 
 var parser = new Parser(grammar);
 
-
-
-function evalAST(ast){
-	
-}
-
-
-
-
-
 {	//Testing
 	/**@type {HTMLInputElement}*/
 	let input = document.getElementById("input")
 	input.value=`
-vec2 sqr(vec2 a){
-    return vec2(a.x * a.x - a.y * a.y,2.0 * a.x * a.y);
-}
-float mag(vec2 a){
-    return a.x * a.x + a.y * a.y;
-}
-
-void main()
-{
-    float c = 1.0;
-    vec2 v = vec2(0,0);
-    for(int i = 0; i < 128; i++){
-        if(mag(v) > 8.0) break;
-        v = sqr(v) + 2.0 * fragCoord;
-        c *= 0.95;
-    }
-    c = 1.0 - c;
-    vec3 col = vec3(0,0,0.5) * (1.0 - c) + vec3(1.0,1.0,1.0) * c;
-    gl_FragColor = vec4(col,1.0);
+func void main(){
+	int a;
+	input a;
+	while(a != 0){
+		test(a){
+			case (a == 1){
+				output "You said one";
+			}
+			case (a == 2){
+				output "You said two";
+			}
+			case (a == 3) {
+				output "You said three";
+			}
+			case (a % 2 == 0) {
+				output "You gave me an even number";
+			}
+			default {
+				output "IDK what you gave me";
+			}
+		}
+	}
+	output "breh.";
 }
 	`.trim();
 	input.oninput = input.onchange = _=>{
