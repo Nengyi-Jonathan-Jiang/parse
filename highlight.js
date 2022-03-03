@@ -10,26 +10,53 @@ function getTokens(ast){
 function highlight(ast, originaltext, targetDiv){
     let tokens = getTokens(ast);
     /** @type {Map<Token,string>} */
-    let m = new Map();
+    let m = basicMap(tokens);
+    let stateStack = [];
 
     (/**@param {ASTNode} node*/function traverse(node){
         switch(node.name){
+            // case "function_decl":
+                
+            //     break;
+            default:
+                if(Array.isArray(node.value)) node.value.forEach(traverse);
+        }
+    })(ast);
+
+    // console.log(m);
+
+    let res = originaltext;
+
+    for(let tk of tokens.reverse()){
+        let {stringBeginPos, stringEndPos} = tk;
+        res = res.substring(0, stringBeginPos) + "\0span class=\"" + (m.get(tk) || "unknown") + "\"\1" + res.substring(stringBeginPos, stringEndPos) + "\0/span\1" + res.substring(stringEndPos);
+    }
+
+    targetDiv.innerHTML = res.replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll("\0","<").replaceAll("\1",">");
+}
+
+/** @param {Token[]} tokens */
+function basicMap(tokens){
+    /** @type {Map<Token,string>} */
+    let m = new Map();
+    for(let token of tokens){
+        switch(token.type){
             case "NUMBER_CONST":
             case "BINARY_CONST":
             case "OCTAL_CONST":
             case "HEX_CONST":
-                m.set(node.value, "number-literal");
+                m.set(token, "number-literal");
                 break;
             
             case "STRING_CONST":
             case "CHAR_CONST":
-                m.set(node.value, "string-literal");
+                m.set(token, "string-literal");
                 break;
             
             case "IF": case "ELSE":
             case "TEST": case "SWITCH": case "CASE": case "DEFAULT":
             case "DO": case "WHILE": case "FOR":
-                m.set(node.value, "control-keyword");
+                m.set(token, "control-keyword");
                 break;
 			
 			case "INPUT": case "OUTPUT":
@@ -37,17 +64,31 @@ function highlight(ast, originaltext, targetDiv){
 			case "RETURN":
 			case "BREAK": case "CONTINUE":
 			case "GOTO":
-                m.set(node.value, "keyword");
+                m.set(token, "keyword");
                 break;
-			
+            case ">>=": case "<<=": case "+=":
+            case "*=":  case "-=":  case "/=": 
+            case "%=":  case "==":  case "&&":
+            case "||":  case "^^":  case "++":
+            case "--":  case "<=":  case ">=":
+            case "!=":  case "<<":  case ">>":
+            case "->":  case "!":   case "=": 
+            case "<":   case ">":   case "+":
+            case "-":   case "*":   case "/":
+            case "%":   case "?":   case ":": 
+            case "|":   case "&":   case "^": 
+                m.set(token, "operator");
+                break;
             default:
-                if(Array.isArray(node.value)) node.value.forEach(traverse);
-                else m.set(node.value, "unknown");
+                m.set(token, "unknown");
         }
-    })(ast);
+    }
+    return m;
+}
 
-    // console.log(m);
-
+/** @param {Token[]} tokens @param {string} originaltext @param {HTMLDivElement} targetDiv */
+function highlightBasic(tokens, originaltext, targetDiv){
+    let m = basicMap(tokens);
     let res = originaltext;
 
     for(let tk of tokens.reverse()){

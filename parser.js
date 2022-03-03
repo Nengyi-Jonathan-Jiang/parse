@@ -289,10 +289,13 @@ class Parser{
 					astStk.push(new ASTNode(token.type, token));
 					break;
 				case "reduce":
-					if(prev.rule.tkns.length == 1) break;
+					// if(prev.rule.tkns.length == 1) break;
 					let t = [];
 					for(let i = 0; i < prev.rule.tkns.length; i++)
 						t.unshift(astStk.pop());
+					if(t.length == 1 && Array.isArray(t[0].value) && t[0].value.length == 1){
+						t[0] = t[0].value[0];
+					}
 					astStk.push(new ASTNode(prev.rule.lhs, t));
 					break;
 			}

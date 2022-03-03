@@ -30,11 +30,14 @@ var allowed_tokens = [
 
 			"input",
 			"output",
+
+			"alloc",
+			"dealloc",
 		].map(i=>[i.toUpperCase(), new RegExp(`^${i}\\b`)]),
 
 		//Literals
 		["BOOL_CONST", /^(true|false)\b/],
-		["STRING_CONST", /^"([^\\"]|\\.|\\")*"/],
+		["STRING_CONST", /^"([^\\"\n]|\\.|\\")*"/],
 		["CHAR_CONST", /^'.'/],
 		//Identifiers
 		["IDENTIFIER", /^([a-zA-Z_][a-zA-Z0-9_]*)\b/],
@@ -44,7 +47,7 @@ var allowed_tokens = [
 		["HEX_CONST", /^0x[0-9A-Fa-f]+\b/],
 		["OCTAL_CONST", /^0[0-7]+\b/],
 		["BINARY_CONST", /^0b[01]+\b/],
-		
+		["UNKNOWN", /^./]
 ]
 
 var tokenizer = new Tokenizer(
@@ -318,6 +321,7 @@ statements := statement_list
 statement_list := statement
 statement_list := statement_list statement
 
+statement := ;
 statement := expression ;
 statement := block_statements
 statement := variable_decls
@@ -332,6 +336,7 @@ statement := else_statement
 statement := test_statement
 statement := switch_statement
 statement := jump_statement
+statement := dealloc_statement
 
 primary_expression := ( expression )
 
@@ -424,6 +429,7 @@ assignment_operator := |=
 
 expression := assignment_expression
 expression := expression , assignment_expression
+expression := alloc_expr
 
 type := IDENTIFIER
 type := IDENTIFIER :: type
@@ -448,12 +454,21 @@ variable_name_and_assign := IDENTIFIER = expression
 function_decl := type FUNC IDENTIFIER ( ) block_statements
 function_decl := type FUNC IDENTIFIER ( func_args ) block_statements
 
+single_variable_decl := type VAR IDENTIFIER
+
 func_args := single_variable_decl
 func_args := func_args , single_variable_decl
 
 do_while_loop := DO block_statements WHILE ( expression ) ;
 while_loop := WHILE ( expression ) statement
-for_loop := for ( variable_decls ; expression ; expression ) statement
+for_loop := FOR ( for_loop_first for_loop_second ; for_loop_third ) statement
+
+for_loop_first := ;
+for_loop_first := variable_decls
+for_loop_second := ε
+for_loop_second := expression
+for_loop_third := ε
+for_loop_third := expression
 
 if_statement := IF ( expression ) statement
 else_statement := ELSE statement
@@ -476,7 +491,7 @@ block_statements := { statements }
 output_statement := OUTPUT io_thingy ;
 input_statement := INPUT io_thingy ;
 io_thingy := expression
-io_thingy := io_thingy expression
+io_thingy := io_thingy , , expression
 
 jump_statement := CONTINUE ;
 jump_statement := BREAK ;
@@ -489,6 +504,9 @@ class_inner := ε
 class_inner := class_inner class_inner_statement
 class_inner_statement := variable_decls
 class_inner_statement := function_decl
+
+alloc_expr := ALLOC type [ expression ]
+dealloc_statement := DEALLOC identifier
 `;
 
 
@@ -518,40 +536,78 @@ var parser = new Parser(grammar);
 	}
 	
 	input.value=`
-/* A simple program demonstrating simple control structures and I/O */
+/*********************************
+ * example YACBL (Yet Another C Based Language) program
+ * Author: John Doe            
+ ********************************/
+
+int func fibonacci(int var N){
+	output "Running Fibonacci:\\n================\\n";
+	int var a = 0, b = 1, c;
+	for(int var i = 0; i < N; i++){
+		c = a + b;
+		a = b;
+		b = c;
+		output "The " ,, i + 1 ,, " th Fibonacci number is " ,, c ,, "\\n";
+	}
+	output "================\\n";
+	return c;
+}
+
+bool func fizzBuzz(int var N){
+	output "Running FizzBuzz:\\n================\\n";
+	for(int var i = 1; i <= N; i++){
+		output i ,, ": " ,, i % 3 == 0 || i % 5 == 0 ? "Fizz" : "Buzz" ,, "\\n";
+	}
+	output "================\\n";
+	return N % 3 == 0 || N % 5 == 0;
+}
+
 void func main(){
-	int var a;
-	input a;
-	while(a != 0){
-		test(a){
-			case (a == 1){
-				output "You said one";
-			}
-			case (a == 2){
-				output "You said two";
-			}
-			case (a == 3) {
-				output "You said three";
-			}
-			case (a % 2 == 0) {
-				output "You gave me an even number";
-			}
-			default {
-				output "IDEK what you gave me";
-			}
+	string var command = "init";
+	while(command != "quit"){
+		output "Enter a command: \\"fizzBuzz\\" or \\"Fibonacci\\"\\n";
+		input command;
+		switch(command){
+			case "fizzBuzz":
+			case "FizzBuzz":
+			case "fizzbuzz":
+				int var N;
+				input N;
+				bool var result = fizzBuzz;
+				output "Result: " ,, result ,, "\\n\\n";
+				break;
+
+			case "fibonacci":
+			case "Fibonacci":
+				int var N;
+				input N;
+				int var result = fibonacci;
+				output "Result: " ,, result ,, "\\n\\n";
+				break;
+
+			case "multiply":
+				int var N, M;
+				input N ,, M;
+				int var result = N * M;
+				output "Result: " ,, result ,, "\\n\\n";
+				break;
 		}
 	}
-	output "breh.";
+	output "You exited the program.";
 }
 	`.trim().replaceAll("\t","    ");
 	input.oninput = input.onchange = _=>{
-		input.style.setProperty("outline", `1px solid ${parser.parse(tokenizer.tokenize(input.value))[1] ? "limegreen" : "red"}`);
+		let tokens = tokenizer.tokenize(input.value);
 		try{
-		    let ast = parser.toAST(tokenizer.tokenize(input.value));
-		    highlight(ast, input.value, output)
+			let ast = parser.toAST(tokens);
+			input.style.setProperty("outline", "2px solid limegreen");
+		    highlight(ast, input.value, output);
 		}
 		catch{
+			input.style.setProperty("outline", "2px solid red");
 			output.innerHTML = input.value;
+			highlightBasic(tokens, input.value, output);
 		}
 	}
 	input.oninput();
@@ -645,21 +701,3 @@ void func main(){
 		}
 	}
 }
-
-
-// let textarea = document.querySelector("textarea");
-// let output = document.getElementById("highlighted");
-// textarea.onscroll = /**@param e*/ e=>{
-// 	output.scrollTop = textarea.scrollTop;
-// 	output.scrollLeft = textarea.scrollLeft;
-// }
-// textarea.addEventListener("input",(f=>(f(),f))(_=>{
-//   let input = textarea.value;
-//   try{
-//   let ast = parser.toAST(tokenizer.tokenize(input));
-//   highlight(ast, input, output)
-//   }
-//   catch{
-//     output.innerHTML = input;
-//   }
-// }))

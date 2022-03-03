@@ -21,15 +21,17 @@
         font-size: x-large;
         padding: 0;
         font-family: monospace;
-        width:calc(100vw);
-        height:calc(100vh);
+        width:calc(100vw - 4px);
+        height:calc(100vh - 4px);
+        left: 2px;
+        top: 2px;
         overflow: auto;
         position:absolute;
       }
       ::-webkit-scrollbar{display:none}
       textarea{
         border:none;
-        outline:1px solid black;
+        outline: 2px solid black;
         resize:none;
         color: transparent;
         background-color: transparent;
@@ -48,8 +50,11 @@
       span.type-name{
         color: #77ddff;
       }
-	  span.keyword{
+	    span.keyword{
         color: #dd77dd;
+      }
+      span.operator{
+        color: #ff5566;
       }
       span.unknown{
         color: white;

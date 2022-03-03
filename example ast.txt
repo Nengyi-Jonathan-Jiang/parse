@@ -1,373 +1,459 @@
-
- statement_list [
-   statement_list [
-     function_definition [
-       function_prototype [
-         function_header_with_parameters [
-           function_header [
-             IDENTIFIER "vec2"
-             IDENTIFIER "sqr"
-             "("
-           ]
-           parameter_declarator [
-             IDENTIFIER "vec2"
-             IDENTIFIER "a"
-           ]
-         ]
-         ")"
-       ]
-       compound_statement_no_new_scope [ ""
-         jump_statement [
-           RETURN "return"
-           function_call_generic [
-             function_call_header_with_parameters [
-               function_call_header_with_parameters [
-                 function_call_header [
-                   IDENTIFIER "vec2"
-                   "("
-                 ]
-                 additive_expression [
-                   multiplicative_expression [
-                     postfix_expression [
-                       IDENTIFIER "a"
-                       "."
-                       IDENTIFIER "x"
-                     ]
-                     "*"
-                     postfix_expression [
-                       IDENTIFIER "a"
-                       "."
-                       IDENTIFIER "x"
-                     ]
-                   ]
-                   "-"
-                   multiplicative_expression [
-                     postfix_expression [
-                       IDENTIFIER "a"
-                       "."
-                       IDENTIFIER "y"
-                     ]
-                     "*"
-                     postfix_expression [
-                       IDENTIFIER "a"
-                       "."
-                       IDENTIFIER "y"
-                     ]
-                   ]
-                 ]
-               ]
-               ","
-               multiplicative_expression [
-                 multiplicative_expression [
-                   NUMBER_CONST "2.0"
-                   "*"
-                   postfix_expression [
-                     IDENTIFIER "a"
-                     "."
-                     IDENTIFIER "x"
-                   ]
-                 ]
-                 "*"
-                 postfix_expression [
-                   IDENTIFIER "a"
-                   "."
-                   IDENTIFIER "y"
-                 ]
-               ]
-             ]
-             ")"
-           ]
-           ";"
-         ] ""
-       ]
-     ]
-     function_definition [
-       function_prototype [
-         function_header_with_parameters [
-           function_header [
-             IDENTIFIER "float"
-             IDENTIFIER "mag"
-             "("
-           ]
-           parameter_declarator [
-             IDENTIFIER "vec2"
-             IDENTIFIER "a"
-           ]
-         ]
-         ")"
-       ]
-       compound_statement_no_new_scope [ ""
-         jump_statement [
-           RETURN "return"
-           additive_expression [
-             multiplicative_expression [
-               postfix_expression [
-                 IDENTIFIER "a"
-                 "."
-                 IDENTIFIER "x"
-               ]
-               "*"
-               postfix_expression [
-                 IDENTIFIER "a"
-                 "."
-                 IDENTIFIER "x"
-               ]
-             ]
-             "+"
-             multiplicative_expression [
-               postfix_expression [
-                 IDENTIFIER "a"
-                 "."
-                 IDENTIFIER "y"
-               ]
-               "*"
-               postfix_expression [
-                 IDENTIFIER "a"
-                 "."
-                 IDENTIFIER "y"
-               ]
-             ]
-           ]
-           ";"
-         ] ""
-       ]
-     ]
-   ]
-   function_definition [
-     function_prototype [
-       function_header [
-         IDENTIFIER "void"
-         IDENTIFIER "main"
-         "("
-       ]
-       ")"
-     ]
-     compound_statement_no_new_scope [ ""
-       statement_list [
-         statement_list [
-           statement_list [
-             statement_list [
-               statement_list [
-                 declaration [
-                   single_declaration [
-                     IDENTIFIER "float"
-                     IDENTIFIER "c"
-                     "="
-                     NUMBER_CONST "1.0"
-                   ]
-                   ";"
-                 ]
-                 declaration [
-                   single_declaration [
-                     IDENTIFIER "vec2"
-                     IDENTIFIER "v"
-                     "="
-                     function_call_generic [
-                       function_call_header_with_parameters [
-                         function_call_header_with_parameters [
-                           function_call_header [
-                             IDENTIFIER "vec2"
-                             "("
-                           ]
-                           NUMBER_CONST "0"
-                         ]
-                         ","
-                         NUMBER_CONST "0"
-                       ]
-                       ")"
-                     ]
-                   ]
-                   ";"
-                 ]
-               ]
-               iteration_statement [
-                 FOR "for"
-                 "("
-                 declaration [
-                   single_declaration [
-                     IDENTIFIER "int"
-                     IDENTIFIER "i"
-                     "="
-                     NUMBER_CONST "0"
-                   ]
-                   ";"
-                 ]
-                 for_rest_statement [
-                   relational_expression [
-                     IDENTIFIER "i"
-                     "<"
-                     NUMBER_CONST "128"
-                   ]
-                   ";"
-                   postfix_expression [
-                     IDENTIFIER "i"
-                     "++"
-                   ]
-                 ]
-                 ")"
-                 compound_statement_no_new_scope [ ""
-                   statement_list [
-                     statement_list [
-                       selection_statement [
-                         IF "if"
-                         "("
-                         relational_expression [
-                           function_call_generic [
-                             function_call_header_with_parameters [
-                               function_call_header [
-                                 IDENTIFIER "mag"
-                                 "("
-                               ]
-                               IDENTIFIER "v"
-                             ]
-                             ")"
-                           ]
-                           ">"
-                           NUMBER_CONST "8.0"
-                         ]
-                         ")"
-                         jump_statement [
-                           BREAK "break"
-                           ";"
-                         ]
-                       ]
-                       expression_statement [
-                         assignment_expression [
-                           IDENTIFIER "v"
-                           "="
-                           additive_expression [
-                             function_call_generic [
-                               function_call_header_with_parameters [
-                                 function_call_header [
-                                   IDENTIFIER "sqr"
-                                   "("
-                                 ]
-                                 IDENTIFIER "v"
-                               ]
-                               ")"
-                             ]
-                             "+"
-                             multiplicative_expression [
-                               NUMBER_CONST "2.0"
-                               "*"
-                               IDENTIFIER "fragCoord"
-                             ]
-                           ]
-                         ]
-                         ";"
-                       ]
-                     ]
-                     expression_statement [
-                       assignment_expression [
-                         IDENTIFIER "c"
-                         "*="
-                         NUMBER_CONST "0.95"
-                       ]
-                       ";"
-                     ]
-                   ] ""
-                 ]
-               ]
-             ]
-             expression_statement [
-               assignment_expression [
-                 IDENTIFIER "c"
-                 "="
-                 additive_expression [
-                   NUMBER_CONST "1.0"
-                   "-"
-                   IDENTIFIER "c"
-                 ]
-               ]
-               ";"
-             ]
-           ]
-           declaration [
-             single_declaration [
-               IDENTIFIER "vec3"
-               IDENTIFIER "col"
-               "="
-               additive_expression [
-                 multiplicative_expression [
-                   function_call_generic [
-                     function_call_header_with_parameters [
-                       function_call_header_with_parameters [
-                         function_call_header_with_parameters [
-                           function_call_header [
-                             IDENTIFIER "vec3"
-                             "("
-                           ]
-                           NUMBER_CONST "0"
-                         ]
-                         ","
-                         NUMBER_CONST "0"
-                       ]
-                       ","
-                       NUMBER_CONST "0.5"
-                     ]
-                     ")"
-                   ]
-                   "*"
-                   primary_expression [
-                     "("
-                     additive_expression [
-                       NUMBER_CONST "1.0"
-                       "-"
-                       IDENTIFIER "c"
-                     ]
-                     ")"
-                   ]
-                 ]
-                 "+"
-                 multiplicative_expression [
-                   function_call_generic [
-                     function_call_header_with_parameters [
-                       function_call_header_with_parameters [
-                         function_call_header_with_parameters [
-                           function_call_header [
-                             IDENTIFIER "vec3"
-                             "("
-                           ]
-                           NUMBER_CONST "1.0"
-                         ]
-                         ","
-                         NUMBER_CONST "1.0"
-                       ]
-                       ","
-                       NUMBER_CONST "1.0"
-                     ]
-                     ")"
-                   ]
-                   "*"
-                   IDENTIFIER "c"
-                 ]
-               ]
-             ]
-             ";"
-           ]
-         ]
-         expression_statement [
-           assignment_expression [
-             IDENTIFIER "gl_FragColor"
-             "="
-             function_call_generic [
-               function_call_header_with_parameters [
-                 function_call_header_with_parameters [
-                   function_call_header [
-                     IDENTIFIER "vec4"
-                     "("
-                   ]
-                   IDENTIFIER "col"
-                 ]
-                 ","
-                 NUMBER_CONST "1.0"
-               ]
-               ")"
-             ]
-           ]
-           ";"
-         ]
-       ] ""
-     ]
-   ]
- ]
+statement_list [
+    statement_list [
+        function_decl [
+            IDENTIFIER "int"
+            FUNC "func"
+            IDENTIFIER "fibonacci"
+            "("
+            single_variable_decl [
+                IDENTIFIER "int"
+                VAR "var"
+                IDENTIFIER "N"
+            ]
+            ")"
+            block_statements [
+                statement_list [
+                    statement_list [
+                        statement_list [
+                            statement_list [
+                                output_statement [
+                                    OUTPUT "output"
+                                    STRING_CONST "\"Running Fibonacci:\\n================\\n\""
+                                    ";"
+                                ]
+                                variable_decls [
+                                    IDENTIFIER "int"
+                                    VAR "var"
+                                    variable_inits [
+                                        variable_inits [
+                                            variable_name_and_assign [
+                                                IDENTIFIER "a"
+                                                "="
+                                                NUMBER_CONST "0"
+                                            ]
+                                            ","
+                                            variable_name_and_assign [
+                                                IDENTIFIER "b"
+                                                "="
+                                                NUMBER_CONST "1"
+                                            ]
+                                        ]
+                                        ","
+                                        IDENTIFIER "c"
+                                    ]
+                                    ";"
+                                ]
+                            ]
+                            for_loop [
+                                FOR "for"
+                                "("
+                                variable_decls [
+                                    IDENTIFIER "int"
+                                    VAR "var"
+                                    variable_name_and_assign [
+                                        IDENTIFIER "i"
+                                        "="
+                                        NUMBER_CONST "0"
+                                    ]
+                                    ";"
+                                ]
+                                relational_expression [
+                                    IDENTIFIER "i"
+                                    "<"
+                                    IDENTIFIER "N"
+                                ]
+                                ";"
+                                postfix_expression [
+                                    IDENTIFIER "i"
+                                    "++"
+                                ]
+                                ")"
+                                block_statements [
+                                    statement_list [
+                                        statement_list [
+                                            statement_list [
+                                                statement [
+                                                    assignment_expression [
+                                                        IDENTIFIER "c"
+                                                        "="
+                                                        additive_expression [
+                                                            IDENTIFIER "a"
+                                                            "+"
+                                                            IDENTIFIER "b"
+                                                        ]
+                                                    ]
+                                                    ";"
+                                                ]
+                                                statement [
+                                                    assignment_expression [
+                                                        IDENTIFIER "a"
+                                                        "="
+                                                        IDENTIFIER "b"
+                                                    ]
+                                                    ";"
+                                                ]
+                                            ]
+                                            statement [
+                                                assignment_expression [
+                                                    IDENTIFIER "b"
+                                                    "="
+                                                    IDENTIFIER "c"
+                                                ]
+                                                ";"
+                                            ]
+                                        ]
+                                        output_statement [
+                                            OUTPUT "output"
+                                            expression [
+                                                expression [
+                                                    expression [
+                                                        expression [
+                                                            STRING_CONST "\"The \""
+                                                            ","
+                                                            additive_expression [
+                                                                IDENTIFIER "i"
+                                                                "+"
+                                                                NUMBER_CONST "1"
+                                                            ]
+                                                        ]
+                                                        ","
+                                                        STRING_CONST "\" th Fibonacci number is \""
+                                                    ]
+                                                    ","
+                                                    IDENTIFIER "c"
+                                                ]
+                                                ","
+                                                STRING_CONST "\"\\n\""
+                                            ]
+                                            ";"
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                        output_statement [
+                            OUTPUT "output"
+                            STRING_CONST "\"================\\n\""
+                            ";"
+                        ]
+                    ]
+                    jump_statement [
+                        RETURN "return"
+                        IDENTIFIER "c"
+                        ";"
+                    ]
+                ]
+            ]
+        ]
+        function_decl [
+            IDENTIFIER "bool"
+            FUNC "func"
+            IDENTIFIER "fizzBuzz"
+            "("
+            single_variable_decl [
+                IDENTIFIER "int"
+                VAR "var"
+                IDENTIFIER "N"
+            ]
+            ")"
+            block_statements [
+                statement_list [
+                    statement_list [
+                        statement_list [
+                            output_statement [
+                                OUTPUT "output"
+                                STRING_CONST "\"Running FizzBuzz:\\n================\\n\""
+                                ";"
+                            ]
+                            for_loop [
+                                FOR "for"
+                                "("
+                                variable_decls [
+                                    IDENTIFIER "int"
+                                    VAR "var"
+                                    variable_name_and_assign [
+                                        IDENTIFIER "i"
+                                        "="
+                                        NUMBER_CONST "1"
+                                    ]
+                                    ";"
+                                ]
+                                relational_expression [
+                                    IDENTIFIER "i"
+                                    "<="
+                                    IDENTIFIER "N"
+                                ]
+                                ";"
+                                postfix_expression [
+                                    IDENTIFIER "i"
+                                    "++"
+                                ]
+                                ")"
+                                block_statements [
+                                    output_statement [
+                                        OUTPUT "output"
+                                        expression [
+                                            expression [
+                                                expression [
+                                                    IDENTIFIER "i"
+                                                    ","
+                                                    STRING_CONST "\": \""
+                                                ]
+                                                ","
+                                                conditional_expression [
+                                                    logical_or_expression [
+                                                        equality_expression [
+                                                            multiplicative_expression [
+                                                                IDENTIFIER "i"
+                                                                "%"
+                                                                NUMBER_CONST "3"
+                                                            ]
+                                                            "=="
+                                                            NUMBER_CONST "0"
+                                                        ]
+                                                        "||"
+                                                        equality_expression [
+                                                            multiplicative_expression [
+                                                                IDENTIFIER "i"
+                                                                "%"
+                                                                NUMBER_CONST "5"
+                                                            ]
+                                                            "=="
+                                                            NUMBER_CONST "0"
+                                                        ]
+                                                    ]
+                                                    "?"
+                                                    STRING_CONST "\"Fizz\""
+                                                    ":"
+                                                    STRING_CONST "\"Buzz\""
+                                                ]
+                                            ]
+                                            ","
+                                            STRING_CONST "\"\\n\""
+                                        ]
+                                        ";"
+                                    ]
+                                ]
+                            ]
+                        ]
+                        output_statement [
+                            OUTPUT "output"
+                            STRING_CONST "\"================\\n\""
+                            ";"
+                        ]
+                    ]
+                    jump_statement [
+                        RETURN "return"
+                        logical_or_expression [
+                            equality_expression [
+                                multiplicative_expression [
+                                    IDENTIFIER "N"
+                                    "%"
+                                    NUMBER_CONST "3"
+                                ]
+                                "=="
+                                NUMBER_CONST "0"
+                            ]
+                            "||"
+                            equality_expression [
+                                multiplicative_expression [
+                                    IDENTIFIER "N"
+                                    "%"
+                                    NUMBER_CONST "5"
+                                ]
+                                "=="
+                                NUMBER_CONST "0"
+                            ]
+                        ]
+                        ";"
+                    ]
+                ]
+            ]
+        ]
+    ]
+    function_decl [
+        IDENTIFIER "void"
+        FUNC "func"
+        IDENTIFIER "main"
+        "("
+        ")"
+        block_statements [
+            statement_list [
+                statement_list [
+                    variable_decls [
+                        IDENTIFIER "string"
+                        VAR "var"
+                        variable_name_and_assign [
+                            IDENTIFIER "command"
+                            "="
+                            STRING_CONST "\"init\""
+                        ]
+                        ";"
+                    ]
+                    while_loop [
+                        WHILE "while"
+                        "("
+                        equality_expression [
+                            IDENTIFIER "command"
+                            "!="
+                            STRING_CONST "\"quit\""
+                        ]
+                        ")"
+                        block_statements [
+                            statement_list [
+                                statement_list [
+                                    output_statement [
+                                        OUTPUT "output"
+                                        STRING_CONST "\"Enter a command: \\\"fizzBuzz\\\" or \\\"Fibonacci\\\"\\n\""
+                                        ";"
+                                    ]
+                                    input_statement [
+                                        INPUT "input"
+                                        IDENTIFIER "command"
+                                        ";"
+                                    ]
+                                ]
+                                switch_statement [
+                                    SWITCH "switch"
+                                    "("
+                                    IDENTIFIER "command"
+                                    ")"
+                                    switch_case_statements [
+                                        switch_case_statements [
+                                            switch_case_statements [
+                                                switch_case_statements [
+                                                    switch_case_statements [
+                                                        switch_case_statements []
+                                                        switch_case_statement [
+                                                            CASE "case"
+                                                            STRING_CONST "\"fizzBuzz\""
+                                                            ":"
+                                                            statements []
+                                                        ]
+                                                    ]
+                                                    switch_case_statement [
+                                                        CASE "case"
+                                                        STRING_CONST "\"FizzBuzz\""
+                                                        ":"
+                                                        statements []
+                                                    ]
+                                                ]
+                                                switch_case_statement [
+                                                    CASE "case"
+                                                    STRING_CONST "\"fizzbuzz\""
+                                                    ":"
+                                                    statement_list [
+                                                        statement_list [
+                                                            statement_list [
+                                                                statement_list [
+                                                                    variable_decls [
+                                                                        IDENTIFIER "int"
+                                                                        VAR "var"
+                                                                        IDENTIFIER "N"
+                                                                        ";"
+                                                                    ]
+                                                                    input_statement [
+                                                                        INPUT "input"
+                                                                        IDENTIFIER "N"
+                                                                        ";"
+                                                                    ]
+                                                                ]
+                                                                variable_decls [
+                                                                    IDENTIFIER "bool"
+                                                                    VAR "var"
+                                                                    variable_name_and_assign [
+                                                                        IDENTIFIER "result"
+                                                                        "="
+                                                                        IDENTIFIER "fizzBuzz"
+                                                                    ]
+                                                                    ";"
+                                                                ]
+                                                            ]
+                                                            output_statement [
+                                                                OUTPUT "output"
+                                                                expression [
+                                                                    expression [
+                                                                        STRING_CONST "\"Result: \""
+                                                                        ","
+                                                                        IDENTIFIER "result"
+                                                                    ]
+                                                                    ","
+                                                                    STRING_CONST "\"\\n\\n\""
+                                                                ]
+                                                                ";"
+                                                            ]
+                                                        ]
+                                                        jump_statement [
+                                                            BREAK "break"
+                                                            ";"
+                                                        ]
+                                                    ]
+                                                ]
+                                            ]
+                                            switch_case_statement [
+                                                CASE "case"
+                                                STRING_CONST "\"fibonacci\""
+                                                ":"
+                                                statements []
+                                            ]
+                                        ]
+                                        switch_case_statement [
+                                            CASE "case"
+                                            STRING_CONST "\"Fibonacci\""
+                                            ":"
+                                            statement_list [
+                                                statement_list [
+                                                    statement_list [
+                                                        variable_decls [
+                                                            IDENTIFIER "int"
+                                                            VAR "var"
+                                                            IDENTIFIER "N"
+                                                            ";"
+                                                        ]
+                                                        input_statement [
+                                                            INPUT "input"
+                                                            IDENTIFIER "N"
+                                                            ";"
+                                                        ]
+                                                    ]
+                                                    variable_decls [
+                                                        IDENTIFIER "int"
+                                                        VAR "var"
+                                                        variable_name_and_assign [
+                                                            IDENTIFIER "result"
+                                                            "="
+                                                            IDENTIFIER "fibonacci"
+                                                        ]
+                                                        ";"
+                                                    ]
+                                                ]
+                                                output_statement [
+                                                    OUTPUT "output"
+                                                    expression [
+                                                        expression [
+                                                            STRING_CONST "\"Result: \""
+                                                            ","
+                                                            IDENTIFIER "result"
+                                                        ]
+                                                        ","
+                                                        STRING_CONST "\"\\n\\n\""
+                                                    ]
+                                                    ";"
+                                                ]
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+                output_statement [
+                    OUTPUT "output"
+                    STRING_CONST "\"You exited the program.\""
+                    ";"
+                ]
+            ]
+        ]
+    ]
+]
