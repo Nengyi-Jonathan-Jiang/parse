@@ -27,17 +27,26 @@ function highlight(ast, originaltext, targetDiv){
                 break;
             
             case "IF": case "ELSE":
-            case "TEST": case "SWITCH": case "CASE":
+            case "TEST": case "SWITCH": case "CASE": case "DEFAULT":
             case "DO": case "WHILE": case "FOR":
                 m.set(node.value, "control-keyword");
                 break;
+			
+			case "INPUT": case "OUTPUT":
+			case "VAR": case "FUNC":
+			case "RETURN":
+			case "BREAK": case "CONTINUE":
+			case "GOTO":
+                m.set(node.value, "keyword");
+                break;
+			
             default:
                 if(Array.isArray(node.value)) node.value.forEach(traverse);
                 else m.set(node.value, "unknown");
         }
     })(ast);
 
-    console.log(m);
+    // console.log(m);
 
     let res = originaltext;
 

@@ -1,7 +1,7 @@
 var allowed_tokens = [
 		//Comments
-		["COMMENT", /^(\/\/[^\n]*)/],
-		["MULTILINE_COMMENT", /^\/\\*.*\\*\//s],
+		["COMMENT", /^\/\/[^\n]*/],
+		["MULTILINE_COMMENT", /^\/\*([^*]|\*(?!\/))*\*\//],
 
 		//Symbols and operators
 		...`
@@ -21,6 +21,8 @@ var allowed_tokens = [
 			"switch", "test", "case", "default", 
 			
 			"return",
+
+			"goto",
 
 			"public", "private", "protected", 
 
@@ -471,14 +473,22 @@ switch_statement := SWITCH ( expression ) { switch_case_statements }
 
 block_statements := { statements }
 
-output_statement := OUTPUT expression ;
-input_statement := INPUT expression ;
+output_statement := OUTPUT io_thingy ;
+input_statement := INPUT io_thingy ;
+io_thingy := expression
+io_thingy := io_thingy expression
 
 jump_statement := CONTINUE ;
 jump_statement := BREAK ;
 jump_statement := RETURN ;
 jump_statement := RETURN expression ;
 jump_statement := GOTO IDENTIFIER ;
+
+class_statement := class { class_inner }
+class_inner := ε
+class_inner := class_inner class_inner_statement
+class_inner_statement := variable_decls
+class_inner_statement := function_decl
 `;
 
 
@@ -499,7 +509,14 @@ var parser = new Parser(grammar);
 
 {	//Testing
 	/**@type {HTMLInputElement}*/
-	let input = document.getElementById("input")
+	let input = document.getElementById("input");
+	let output = document.getElementById("highlighted");
+
+	input.onscroll = /**@param e*/ e=>{
+		output.scrollTop = input.scrollTop;
+		output.scrollLeft = input.scrollLeft;
+	}
+	
 	input.value=`
 /* A simple program demonstrating simple control structures and I/O */
 void func main(){
@@ -517,10 +534,10 @@ void func main(){
 				output "You said three";
 			}
 			case (a % 2 == 0) {
-				output "You gave me an even number_literal";
+				output "You gave me an even number";
 			}
 			default {
-				output "IDK what you gave me";
+				output "IDEK what you gave me";
 			}
 		}
 	}
@@ -529,15 +546,18 @@ void func main(){
 	`.trim().replaceAll("\t","    ");
 	input.oninput = input.onchange = _=>{
 		input.style.setProperty("outline", `1px solid ${parser.parse(tokenizer.tokenize(input.value))[1] ? "limegreen" : "red"}`);
+		try{
+		    let ast = parser.toAST(tokenizer.tokenize(input.value));
+		    highlight(ast, input.value, output)
+		}
+		catch{
+			output.innerHTML = input.value;
+		}
 	}
 	input.oninput();
 	//input.onkeypress = 
 	input.onkeydown = e => {
 		if(e.code == "Backquote"){
-			// let tokens = tokenizer.tokenize(input.value)
-			// let [chart, success] = parser.parse(tokens);
-			// console.log(`[${tokens.join(' ')}]\n${chart}`);
-
             let tokens = tokenizer.tokenize(input.value);
             let ast = parser.toAST(tokens);
 
@@ -620,24 +640,26 @@ void func main(){
 			input.selectionStart = selectionStart;
 			input.selectionEnd = selectionEnd;
 			input.selectionDirection = selectionDirection;
+
+			input.oninput();
 		}
 	}
 }
 
 
-let textarea = document.querySelector("textarea");
-let output = document.getElementById("highlighted");
-textarea.onscroll = /**@param e*/ e=>{
-	output.scrollTop = textarea.scrollTop;
-	output.scrollLeft = textarea.scrollLeft;
-}
-textarea.addEventListener("input",(f=>(f(),f))(_=>{
-  let input = textarea.value;
-  try{
-  let ast = parser.toAST(tokenizer.tokenize(input));
-  highlight(ast, input, output)
-  }
-  catch{
-    output.innerHTML = input;
-  }
-}))
+// let textarea = document.querySelector("textarea");
+// let output = document.getElementById("highlighted");
+// textarea.onscroll = /**@param e*/ e=>{
+// 	output.scrollTop = textarea.scrollTop;
+// 	output.scrollLeft = textarea.scrollLeft;
+// }
+// textarea.addEventListener("input",(f=>(f(),f))(_=>{
+//   let input = textarea.value;
+//   try{
+//   let ast = parser.toAST(tokenizer.tokenize(input));
+//   highlight(ast, input, output)
+//   }
+//   catch{
+//     output.innerHTML = input;
+//   }
+// }))
