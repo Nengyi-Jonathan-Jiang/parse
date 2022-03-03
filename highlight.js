@@ -27,12 +27,12 @@ function highlight(ast, originaltext, targetDiv){
 
     let res = originaltext;
 
-    for(let tk of tokens.reverse()){
+    for(let tk of [...tokens].reverse()){
         let {stringBeginPos, stringEndPos} = tk;
         res = res.substring(0, stringBeginPos) + "\0span class=\"" + (m.get(tk) || "unknown") + "\"\1" + res.substring(stringBeginPos, stringEndPos) + "\0/span\1" + res.substring(stringEndPos);
     }
 
-    targetDiv.innerHTML = res.replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll("\0","<").replaceAll("\1",">");
+    targetDiv.innerHTML = res.replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll("\0","<").replaceAll("\1",">");	
 }
 
 /** @param {Token[]} tokens */
@@ -72,11 +72,11 @@ function basicMap(tokens){
             case "||":  case "^^":  case "++":
             case "--":  case "<=":  case ">=":
             case "!=":  case "<<":  case ">>":
-            case "->":  case "!":   case "=": 
+            case "<-":  case "!":   case "=": 
             case "<":   case ">":   case "+":
             case "-":   case "*":   case "/":
             case "%":   case "?":   case ":": 
-            case "|":   case "&":   case "^": 
+            case "|":   case "&":   case "^":
                 m.set(token, "operator");
                 break;
             default:
@@ -91,10 +91,10 @@ function highlightBasic(tokens, originaltext, targetDiv){
     let m = basicMap(tokens);
     let res = originaltext;
 
-    for(let tk of tokens.reverse()){
+    for(let tk of [...tokens].reverse()){
         let {stringBeginPos, stringEndPos} = tk;
-        res = res.substring(0, stringBeginPos) + "<span class=\"" + (m.get(tk) || "unknown") + "\">" + res.substring(stringBeginPos, stringEndPos) + "</span>" + res.substring(stringEndPos);
+        res = res.substring(0, stringBeginPos) + "\0span class=\"" + (m.get(tk) || "unknown") + "\"\1" + res.substring(stringBeginPos, stringEndPos) + "\0span\1" + res.substring(stringEndPos);
     }
 
-    targetDiv.innerHTML = res;
+    targetDiv.innerHTML = res.replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll("\0","<").replaceAll("\1",">");
 }

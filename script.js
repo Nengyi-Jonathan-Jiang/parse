@@ -5,7 +5,7 @@ var allowed_tokens = [
 
 		//Symbols and operators
 		...`
-			>>= <<= && || ^^ ++ -- += *= -= /= %= == <= >= != << >> -> :: ; ! = < > ( ) [ ] { } , . + - * / % ? :
+			>>= <<= && || ^^ ++ -- += *= -= /= %= == <= >= != << >> <- :: ; ! = < > ( ) [ ] { } , . + - * / % ? :
 			| & ^ \\$ # @ \\\\
 		`.trim().split(/ |\n/g).map(i=>i.trim()).map(i => [i, new RegExp(`^(${i.replace(/\||\+|\*|\(|\)|\[|]|\.|\?|\^/g,"\\$&")})`)]),
 
@@ -415,7 +415,7 @@ conditional_expression := logical_or_expression ? expression : assignment_expres
 assignment_expression := conditional_expression
 assignment_expression := unary_expression assignment_operator assignment_expression
 
-assignment_operator := =
+assignment_operator := <-
 assignment_operator := *=
 assignment_operator := /=
 assignment_operator := %=
@@ -537,7 +537,7 @@ var parser = new Parser(grammar);
 	
 	input.value=`
 /*********************************
- * example YACBL (Yet Another C Based Language) program
+ * example YAPL (Yet Another Programming Language) program
  * Author: John Doe            
  ********************************/
 
@@ -545,9 +545,9 @@ int func fibonacci(int var N){
 	output "Running Fibonacci:\\n================\\n";
 	int var a = 0, b = 1, c;
 	for(int var i = 0; i < N; i++){
-		c = a + b;
-		a = b;
-		b = c;
+		c <- a + b;
+		a <- b;
+		b <- c;
 		output "The " ,, i + 1 ,, " th Fibonacci number is " ,, c ,, "\\n";
 	}
 	output "================\\n";
@@ -601,11 +601,11 @@ void func main(){
 		let tokens = tokenizer.tokenize(input.value);
 		try{
 			let ast = parser.toAST(tokens);
-			input.style.setProperty("outline", "2px solid limegreen");
+			document.body.style.setProperty("background-color", "limegreen");
 		    highlight(ast, input.value, output);
 		}
 		catch{
-			input.style.setProperty("outline", "2px solid red");
+			document.body.style.setProperty("background-color", "red");
 			output.innerHTML = input.value;
 			highlightBasic(tokens, input.value, output);
 		}

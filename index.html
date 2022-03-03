@@ -19,24 +19,32 @@
       textarea,div#highlighted{
         white-space: pre;
         font-size: x-large;
-        padding: 0;
+        padding: 11pt 0 11pt 0;
         font-family: monospace;
         width:calc(100vw - 4px);
-        height:calc(100vh - 4px);
+        height:calc(100vh - (4px + (2 * 11pt)));
         left: 2px;
         top: 2px;
         overflow: auto;
         position:absolute;
       }
+		body{
+			background-color: black;
+		}
       ::-webkit-scrollbar{display:none}
       textarea{
         border:none;
-        outline: 2px solid black;
         resize:none;
         color: transparent;
         background-color: transparent;
         caret-color: white;
+		  outline: none;
       }
+
+		textarea::selection{
+			color: transparent;
+			background: #FFF4;
+		}
       
       span.number-literal{
         color: #aa44ff;
