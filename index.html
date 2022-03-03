@@ -9,13 +9,33 @@
     <script src="Highlight.js"></script>
 
     <style>
-      div#highlighted{
-        background-color: rgb(74, 73, 70);
-        color: rgb(144, 143, 140);
-        white-space: pre;
-        padding: 1em;
-        font-family: monospace;
+      body{
+        padding:0;margin:0;
       }
+      div#highlighted{
+        background-color: rgb(44, 43, 40);
+        color: rgb(144, 143, 140);
+      }
+      textarea,div#highlighted{
+        white-space: pre;
+        font-size: xx-large;
+        padding: 0;
+        font-family: monospace;
+        width:calc(100vw);
+        height:calc(100vh);
+        overflow: auto;
+        position:absolute;
+      }
+      ::-webkit-scrollbar{display:none}
+      textarea{
+        border:none;
+        outline:1px solid black;
+        resize:none;
+        color: transparent;
+        background-color: transparent;
+        caret-color: white;
+      }
+      
       span.number-literal{
         color: #aa44ff;
       }
@@ -37,14 +57,12 @@
     </style>
   </head>
   <body>
-	  <textarea id="input" type="text" spellcheck="false" style="border:none;outline:1px solid black;resize:none;font-size:xx-large;font-family: monospace;width:calc(100vw - 24px);height:calc(100vh - 24px);white-space:nowrap;"></textarea>
-    <div id="highlighted"></div>
+    <div id="text-container">
+      <div id="text">
+        <div id="highlighted"></div>
+        <textarea id="input" type="text" spellcheck="false"></textarea>
+      </div>
+    </div>
     <script src="script.js"></script>
-    <script>
-let input = document.querySelector("textarea").value;
-let ast = parser.toAST(tokenizer.tokenize(input));
-let output = document.getElementById("highlighted");
-highlight(ast, input, output)
-    </script>
   </body>
 </html>

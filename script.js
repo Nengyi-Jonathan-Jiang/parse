@@ -623,3 +623,21 @@ void func main(){
 		}
 	}
 }
+
+
+let textarea = document.querySelector("textarea");
+let output = document.getElementById("highlighted");
+textarea.onscroll = /**@param e*/ e=>{
+	output.scrollTop = textarea.scrollTop;
+	output.scrollLeft = textarea.scrollLeft;
+}
+textarea.addEventListener("input",(f=>(f(),f))(_=>{
+  let input = textarea.value;
+  try{
+  let ast = parser.toAST(tokenizer.tokenize(input));
+  highlight(ast, input, output)
+  }
+  catch{
+    output.innerHTML = input;
+  }
+}))
