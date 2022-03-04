@@ -258,24 +258,33 @@ class Parser{
 			}
 		}
 
+		let res = null;
 		for(let j = 0; j < chart.row(i).length; j++){
 			const prevState = chart.row(i)[j];
 			if(prevState.finished && prevState.lhs == "__START__"){
-                return [chart, prevState];
+				res = prevState;
             }
 		}
 
-		return [chart, null];
+		return [chart, res];
+	}
+
+	/** @param {ParseState} last */
+	getSteps(last){
+        let states = [last];
+        while(last.prevState) states.unshift(last = last.prevState);
+		return states;
 	}
 
     /** @param {Token[]} tokens */
-    toAST(tokens){
+    toAST(tokens, debug=false){
 		let tkns = tokens.map(i=>i);
 		
         let [chart, last] = this.parse(tokens);
         if(!last) return null;
-        let states = [last];
-        while(last.prevState) states.unshift(last = last.prevState);
+        // let states = [last];
+        // while(last.prevState) states.unshift(last = last.prevState);
+		let states = this.getSteps(last);
 		
         let astStk = [];
 		let stateStk = [];
@@ -293,15 +302,16 @@ class Parser{
 					let t = [];
 					for(let i = 0; i < prev.rule.tkns.length; i++)
 						t.unshift(astStk.pop());
-					if(t.length == 1 && Array.isArray(t[0].value) && t[0].value.length == 1){
-						t[0] = t[0].value[0];
-					}
+					// if(t.length == 1 && Array.isArray(t[0].value))
+					// 	astStk.push(t[0]);
+					// else
 					astStk.push(new ASTNode(prev.rule.lhs, t));
 					break;
 			}
+			if(debug) console.log("rule: " + state.ruleUsed), console.log("                " + state.toString()), console.log(astStk.map(i=>i.toString()).join('\n\n'));
 			prev = state;
         }
-
+		console.log(astStk);
 		return astStk[0];
     }
 

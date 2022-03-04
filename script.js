@@ -432,12 +432,12 @@ expression := expression , assignment_expression
 expression := alloc_expr
 
 type := IDENTIFIER
-type := IDENTIFIER :: type
 type := type *
 type := type &
+type := type < template_params < template_params >>
 type := type < template_params >
+type := type :: IDENTIFIER
 
-template_param := expression
 template_param := type
 
 template_params := template_param
@@ -514,7 +514,7 @@ var grammar = new Grammar(...grammar_s
 	.trim()
 	.split(/\n+/g)
 	.filter(i=>i.length && !i.match(/^\/\//))
-	.map(i=>i.split(':='))
+	.map(i=>i.split(/:=/))
 	.map(
 		i=>new ParseRule(
 			i[0].trim(),
