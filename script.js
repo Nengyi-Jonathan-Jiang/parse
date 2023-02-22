@@ -537,64 +537,65 @@ var parser = new Parser(grammar);
 	
 	input.value=`
 /*********************************
- * example YAPL (Yet Another Programming Language) program
- * Author: John Doe            
+ * I made a little programming language to test this parser
+ * You can't run it yet
+ * This is just a parsing test
  ********************************/
 
 int func fibonacci(int var N){
-	output "Running Fibonacci:\\n================\\n";
-	int var a = 0, b = 1, c;
-	for(int var i = 0; i < N; i++){
-		c <- a + b;
-		a <- b;
-		b <- c;
-		output "The " ,, i + 1 ,, " th Fibonacci number is " ,, c ,, "\\n";
-	}
-	output "================\\n";
-	return c;
+    output "Running Fibonacci:\n================\n";
+    int var a = 0, b = 1, c;
+    for(int var i = 0; i < N; i++){
+        c <- a + b;
+        a <- b;
+        b <- c;
+        output "The " ,, i + 1 ,, " th Fibonacci number is " ,, c ,, "\n";
+    }
+    output "================\n";
+    return c;
 }
 
 bool func fizzBuzz(int var N){
-	output "Running FizzBuzz:\\n================\\n";
-	for(int var i = 1; i <= N; i++){
-		output i ,, ": " ,, i % 3 == 0 || i % 5 == 0 ? "Fizz" : "Buzz" ,, "\\n";
-	}
-	output "================\\n";
-	return N % 3 == 0 || N % 5 == 0;
+    output "Running FizzBuzz:\n================\n";
+    for(int var i = 1; i <= N; i++){
+        output i ,, ": " ,, i % 3 == 0 || i % 5 == 0 ? "Fizz" : "Buzz" ,, "\n";
+    }
+    output "================\n";
+    return N % 3 == 0 || N % 5 == 0;
 }
 
 void func main(){
-	string var command = "init";
-	while(command != "quit"){
-		output "Enter a command: \\"fizzBuzz\\" or \\"Fibonacci\\"\\n";
-		input command;
-		switch(command){
-			case "fizzBuzz":
-			case "FizzBuzz":
-			case "fizzbuzz":
-				int var N;
-				input N;
-				bool var result = fizzBuzz;
-				output "Result: " ,, result ,, "\\n\\n";
-				break;
+    string var command = "init";
+    while(command != "quit"){
+        output "Enter a command: \"fizzBuzz\" or \"Fibonacci\"\n";
+        input command;
+        switch(command){
+            case "fizzBuzz":
+            case "FizzBuzz":
+            case "fizzbuzz":
+                int var N;
+                input N;
+                bool var result = fizzBuzz;
+                output "Result: " ,, result ,, "\n\n";
+                break;
 
-			case "fibonacci":
-			case "Fibonacci":
-				int var N;
-				input N;
-				int var result = fibonacci;
-				output "Result: " ,, result ,, "\\n\\n";
-				break;
+            case "fibonacci":
+            case "Fibonacci":
+                int var N;
+                input N;
+                int var result = fibonacci;
+                output "Result: " ,, result ,, "\n\n";
+                break;
 
-			case "multiply":
-				int var N, M;
-				input N ,, M;
-				int var result = N * M;
-				output "Result: " ,, result ,, "\\n\\n";
-				break;
-		}
-	}
-	output "You exited the program.";
+            case "multiply":
+                int var N, M;
+                input N ,, M;
+                int var result = N * M;
+                output "Result: " ,, result ,, "\n\n";
+                break;
+        }
+    }
+    output "You exited the program.";
 }
 	`.trim().replaceAll("\t","    ");
 	input.oninput = input.onchange = _=>{
